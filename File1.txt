@@ -1,7 +1,7 @@
 This is some dummy content in the file.
 
-Change1 : some changes made.
+Change---> 1 : some changes made.
 
-change 2 : new change made.
+change---> 2 : new change made.
 
-change 3: change
+change---> 3: change
