@@ -7,25 +7,23 @@ import time
 from google.cloud import vision
 
 
-def main(image_path):
-    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/home/tanuja/Downloads/tanuja-trial-70955c766f92.json'
-
+def validate():
     # Instantiates a client
     client = vision.ImageAnnotatorClient()
 
 
     # local image file
     # profile_image = '/home/tanuja/Desktop/profile1.jpeg'
-    profile_image = image_path
-    with open(profile_image, 'rb') as image_file:
-        content = image_file.read()
-    image = vision.types.Image(content=content)
+    # profile_image = image_path
+    # with open(profile_image, 'rb') as image_file:
+    #     content = image_file.read()
+    # image = vision.types.Image(content=content)
 
     # remote image file
     image_uri = 'https://www2.physics.ox.ac.uk/sites/default/files/images/Stan1.jpg'
 
-    # image = vision.types.Image()
-    # image.source.image_uri = image_uri
+    image = vision.types.Image()
+    image.source.image_uri = image_uri
 
     objects = client.object_localization(
         image=image).localized_object_annotations
@@ -73,5 +71,4 @@ def main(image_path):
 if __name__ == '__main__':
     # image = '/home/tanuja/Desktop/profile1.jpeg'
     # image = '/home/tanuja/Desktop/oneboy.jpeg' # was not able to detect face
-    image = '/home/tanuja/Desktop/two faces.jpeg'
-    print main(image)
+    print validate()

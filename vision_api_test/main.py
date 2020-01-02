@@ -13,22 +13,17 @@
 # limitations under the License.
 
 import webapp2
+import valid_profile
 
 
 class MainPage(webapp2.RequestHandler):
     def get(self):
         self.response.headers['Content-Type'] = 'text/plain'
-        self.response.write('Hello, World!')
+        # self.response.write('Hello, World!')
+        self.response.write(valid_profile.validate())
 
 
 app = webapp2.WSGIApplication([
     ('/', MainPage),
 ], debug=True)
 
-
-def api_test():
-    print "Inside api test"
-
-
-if __name__ == '__main__':
-    api_test()
