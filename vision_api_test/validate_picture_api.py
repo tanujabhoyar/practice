@@ -15,7 +15,7 @@ ANIMAL_OBJECT_CONFIDENCE_SCORE = 0.75
 PERSON_OBJECT_CONFIDENCE_SCORE = 0.50
 GENDER_OBJECT_CONFIDENCE_SCORE = 0.50
 FACE_DETECTION_CONFIDENCE_SCORE = 0.75
-
+MIN_AREA_COVERAGE_BY_PERSON_OBJECT = 0.50
 
 # Pass the image data to an encoding function.
 def encode_image(image_file):
@@ -40,7 +40,7 @@ def validate():
     # profile_image = '/home/tanuja/Desktop/not_valid_1.jpeg'
     image_name = 'personwithpet.jpeg'
     profile_image = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'resources', image_name)
-    profile_image = '/home/tanuja/Downloads/PHOTOS/GOOD_PHOTOS/STSEP191093491_photo_old.jpeg'
+    profile_image = '/home/tanuja/Downloads/PHOTOS/BAD_PHOTOS/STSEP191087595_photo_old.jpeg'
     request_dict = [{
         'image': {
             'content': encode_image(profile_image),
@@ -84,15 +84,24 @@ def validate():
     if 'Person' not in taglist:
         for object_ in objects:
             if object_['name'] in ('Man', 'Woman') and object_['score'] >= GENDER_OBJECT_CONFIDENCE_SCORE:
-                persons.append((object_['name'], object_['score']))
+                persons.append((object_['name'], object_['boundingPoly']))
     else:
         for object_ in objects:
             if object_['name'] == 'Person' and object_['score'] >= PERSON_OBJECT_CONFIDENCE_SCORE:
-                persons.append((object_['name'], object_['score']))
+                persons.append((object_['name'], object_['boundingPoly']))
     # print object_list
     if persons:
         if len(persons) > 1:
             return "not a valid picture more than one person in picture"
+        if 'Animal' in taglist or 'Cat' in taglist or 'Dog' in taglist:
+            for object_ in objects:
+                if object_["name"] in ('Animal', 'Cat', 'Dog') and object_["score"] >= ANIMAL_OBJECT_CONFIDENCE_SCORE:
+                    return "not a valid picture, pet, animal in picture"
+        vertices = persons[0][1]["normalizedVertices"]
+        area = (vertices[1]["x"] - vertices[0]["x"]) * (vertices[3]["y"] - vertices[0]["y"])
+        print "area coverred by object:     ", area
+        if area < MIN_AREA_COVERAGE_BY_PERSON_OBJECT:
+            return "not valid picture image area too small"
         faces = []
         if 'faceAnnotations' in response['responses'][0]:
             faces = response['responses'][0]['faceAnnotations']
